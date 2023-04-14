@@ -148,18 +148,12 @@ public class Huffman {
     }
 
     /**
-     * Decompresses the given compressed array of bytes into their original,
-     * String representation. Uses the trieRoot field (the Huffman Trie) that
-     * generated the compressed message during decoding.
+     * Takes in the parameters and generates the message
      * 
-     * @param compressedMsg {@code byte[]} representing the compressed corpus with
-     *                      the
-     *                      Huffman coded bytecode. Formatted as:
-     *                      (1) the bitstring containing the message itself, (2)
-     *                      possible
-     *                      0-padding on the final byte.
-     * @return Decompressed String representation of the compressed bytecode
-     *         message.
+     * @param HuffNode current Node, integer current Index, String the entire
+     *                 bitstring, String the decompressd Message
+     * 
+     * @return String of the generatedMessage
      */
     private String generateMessage(HuffNode currNode, int currIndex, String wholeString, String decompressedMsg) {
         if (currNode.isLeaf()) {
