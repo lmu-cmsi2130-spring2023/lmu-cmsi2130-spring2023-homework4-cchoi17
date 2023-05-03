@@ -33,6 +33,11 @@ public class Huffman {
      *               establishes the Encoding Map; later compressed corpi may
      *               differ.
      */
+    // >> [TN] Notice how bloated with code your constructor got? When so much is happening
+    // it's hard to see the constituent pieces, debug, and interpret. This would've been the
+    // perfect opportunity to decompose into helper methods that each took a part of the job:
+    // (0.5 off for each that there wasn't a helper made for): (a) Finding the character distribution,
+    // (b) building the Huffman Trie, (c) constructing the encoding map. (-1)
     public Huffman(String corpus) {
         HashMap<Character, Integer> distribution = new HashMap<>();
         distribution.put(ETB_CHAR, 1);
@@ -46,6 +51,8 @@ public class Huffman {
         }
         PriorityQueue<HuffNode> huffmanTrie = new PriorityQueue<>();
         for (Map.Entry<Character, Integer> entry : distribution.entrySet()) {
+            // >> [TN] Every entry in a map is a key and a value, what do these specfic keys 
+            // and values represent? Naming them something about characters and frequency are more descriptive
             Character key = entry.getKey();
             Integer value = entry.getValue();
             HuffNode leaf = new HuffNode(key, value);
@@ -54,6 +61,9 @@ public class Huffman {
         while (huffmanTrie.size() != 1) {
             HuffNode currZeroChild = huffmanTrie.poll();
             HuffNode currOneChild = huffmanTrie.poll();
+            // >> [TN] Ah whoops -- here's a problem: remember that nodes are prioritized by frequency first
+            // but then with ties broken by their character field. What happens if you give all non-leaves
+            // the same character? Review the tiebreaking criteria, which is earliest character *in a subtree*
             HuffNode parent = new HuffNode(currZeroChild.character, 0);
             parent.zeroChild = currZeroChild;
             parent.oneChild = currOneChild;
@@ -61,9 +71,12 @@ public class Huffman {
             huffmanTrie.add(parent);
         }
         trieRoot = huffmanTrie.poll();
+        // >> [TN] Remove commented code before submission (-0.5)
         // huffmanTrie.add(trieRoot);
         this.encodingMap = new TreeMap<>();
         toBitCode(trieRoot, "");
+        // >> [TN] Remove print statements before submission in the future; they will substantially
+        // slow your solution down! (-0.5)
         System.out.println(encodingMap);
     }
 
@@ -101,6 +114,9 @@ public class Huffman {
      *         (1) the bitstring containing the message itself, (2) possible
      *         0-padding on the final byte.
      */
+    // >> [TN] The compress method can be broken down into constituent pieces to reduce the clutter
+    // in a single method: (a) getting the String of compressed bits for the message and (b) converting
+    // that bitstring into the byte array. (-0.5)
     public byte[] compress(String message) {
         String result = "";
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -207,3 +223,21 @@ public class Huffman {
     }
 
 }
+
+// ===================================================
+// >>> [TN] Summary
+// 
+// ---------------------------------------------------
+// >>> [TN] Style Checklist
+// [X] = Good, [~] = Mixed bag, [ ] = Needs improvement
+//
+// [X] Variables and helper methods named and used well
+// [X] Proper and consistent indentation and spacing
+// [X] Proper JavaDocs provided for ALL methods
+// [X] Logic is adequately simplified
+// [X] Code repetition is kept to a minimum
+// ---------------------------------------------------
+// Correctness:          98.5 / 100 (-1.5 / missed test)
+// Style Penalty:         -3
+// Total:                95.5 / 100
+// ===================================================
